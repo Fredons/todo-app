@@ -15,6 +15,6 @@ window = sg.Window("File Zipper", layout=[
     [label1, file_path, choose_file_btn],
     [label2, folder_path, folder_btn],
     [compress_btn]
-])
+], font=('Helvetica', 15))
 window.read()
 window.close()
