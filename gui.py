@@ -1,6 +1,11 @@
 import functions
 import PySimpleGUI as sg
 import time
+import os
+
+if not os.path.exists('todos.txt'):
+    with open("todos.txt", 'w') as file:
+        pass
 
 sg.theme("TanBlue")
 
@@ -43,30 +48,39 @@ while True:
 
         case "Edit":
             try:
-                todo_to_edit = value['todos'][0]
-                new_todo = value['todo'] + '\n'
                 todos = functions.get_todos()
-                index = todos.index(todo_to_edit)
-                todos[index] = new_todo
-                functions.write_todos(todos)
-                window['todos'].update(values=todos)
+                if todos:
+                    todo_to_edit = value['todos'][0]
+                    new_todo = value['todo']
+                    index = todos.index(todo_to_edit)
+                    if todos[index] == new_todo:
+                        sg.popup("Task still the same. No edit made!")
+                    else:
+                        todos[index] = new_todo + '\n'
+                        functions.write_todos(todos)
+                        window['todos'].update(values=todos)
+                else:
+                    sg.popup("There are no items to edit.", font=("Helvetica", 20))
             except IndexError:
                 sg.popup("Please select an item first", font=("Helvetica", 20))
 
         case "Complete":
             try:
-                todo_to_complete = value['todos'][0]
                 todos = functions.get_todos()
-                todos.remove(todo_to_complete)
-                functions.write_todos(todos)
-                window['todos'].update(values=todos)
-                window['todo'].update(value="")
-            except:
+                if todos:
+                    todo_to_complete = value['todos'][0]
+                    todos.remove(todo_to_complete)
+                    functions.write_todos(todos)
+                    window['todos'].update(values=todos)
+                    window['todo'].update(value="")
+                else:
+                    sg.popup("There are no items to complete.", font=("Helvetica", 20))
+            except IndexError:
                 sg.popup("Please select an item first", font=("Helvetica", 20))
 
-
         case 'todos':
-            window['todo'].update(value['todos'][0])
+            if value['todos']:
+                window['todo'].update(value['todos'][0])
 
         case "Exit":
             break
